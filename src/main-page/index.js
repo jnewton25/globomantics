@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./main-page.css";
 import Header from "./header";
@@ -9,15 +9,15 @@ import HouseFromQuery from "../house/HouseFromQuery";
 
 function App() {
 	const [allHouses, setAllHouses] = useState([]);
+	const fetchHouses = useCallback(async () => {
+		const rsp = await fetch("/houses.json");
+		const houses = await rsp.json();
+		setAllHouses(houses);
+	}, []);
 
 	useEffect(() => {
-		const fetchHouses = async () => {
-			const rsp = await fetch("/houses.json");
-			const houses = await rsp.json();
-			setAllHouses(houses);
-		};
 		fetchHouses();
-	}, []);
+	}, [fetchHouses]);
 
 	const featuredHouse = useMemo(() => {
 		if (allHouses.length) {
